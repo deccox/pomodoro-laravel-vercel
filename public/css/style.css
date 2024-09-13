@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+
+@font-face {
+    font-family: 'Blackbarry';
+    src: url('../fonts/Blackbarry.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 :root{
     --color: black;
     --color-sec: #1E1E1E;
@@ -19,17 +28,15 @@
 }
 
 body{
-    height: 100vh;
-    width: 100%;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 10px 0px;
     background-color: var(--color);
 
 }
 
 body main {
-    
+    overflow: hidden;
     padding: 10px;
     gap: 20px;
     height: 100%;
@@ -43,7 +50,7 @@ body main {
 #left{
     display: flex;
     flex-direction: column ;
-    gap: 5px;
+    gap: 10px;
     padding: 10px;
 
     
@@ -72,17 +79,45 @@ body main {
 .board-timer{
     border-radius: 10px;
     height: 210px;
-
+    font-family: 'Blackbarry';
+    font-size: 10rem;
     gap: 5px;
+
+    color: white;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
 }
 
+
 .borderbox{
-    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 10px;
     border: 1px solid white;
     height: 100%;
+    flex: 1;
 }
 
+.borderbox span{
+    z-index: 5;
+}
+
+.borderbox:nth-of-type(1)::before{
+    content: "";
+    background-color: black;
+    z-index: 4;
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    top: 50%;
+    left: 0px;
+    transform: translateY(-50%);
+    box-shadow: 
+    0px 20px 10px 10px rgb(0, 0, 0),
+    0px -20px 10px 10px rgb(0, 0, 0);
+}
 
 /** buttons */
 .board-buttons{
@@ -103,18 +138,30 @@ body main {
 }
 
 .board-buttons button:nth-of-type(1){
-    width: 150px;
+    max-width: 150px;
+    width: 100%;
     font-weight: 700;
     letter-spacing: 1px;
+    padding: 5px 0px;
+    cursor: pointer;
 }
 .board-buttons button:nth-of-type(2){
+    max-width: 100px;
+    width: 100%;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 0px;
+    cursor: pointer;
+}
+.board-buttons button:nth-of-type(3){
     width: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
-.board-buttons button:nth-of-type(2) img{
+.board-buttons button:nth-of-type(3) img{
     width: 36px;
 }
 /** buttons */
@@ -153,7 +200,131 @@ body main {
 
 .quads{
     border-radius: 3px;
-
-    height: 25px;
     background-color: var(--color-quads);
+    height: 25px;
+}
+
+
+/** gear config*/
+
+.gear-modal{
+    max-width: 380px;
+    width: 100%;
+    padding: 5px;
+    display: none;
+    flex-direction: column;
+    border: 1px solid white;
+    border-radius: 10px;
+    background-color: var(--color-sec);
+    color: white;
+    gap: 10px;
+    font-family: 'Poppins';
+}
+
+.gear-modal.active{
+    display: flex;
+}
+
+.gear-board:nth-of-type(1){
+    flex: 1;
+    display: flex;
+    justify-content: end;
+}
+
+.gear-board:nth-of-type(1) div{
+    width: 30px;
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: var(--color-quads);
+}
+
+
+.gear-board:nth-of-type(1) div img{
+    width: 100%;
+}
+
+
+
+.gear-board:nth-of-type(2){
+    flex: 1;
+    display: flex;
+
+    gap: 2px; 
+}
+
+.gear-board:nth-of-type(2) label{
+    display: flex;
+    flex: 1;
+    gap: 2px;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.gear-board:nth-of-type(2) label input{
+    width: 100%;
+    border: 1px solid white;
+    background-color: black;
+    outline: none;
+    font-family: 'Poppins';
+    border-radius: 3px;
+    padding-left: 3px;
+    color: white;
+}
+
+.gear-board:nth-of-type(3){
+    flex: 1;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+
+.gear-board:nth-of-type(3) button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    padding: 5px 0px;
+    border: 1px solid white;
+    border-radius: 3px;
+    background-color: black;
+    color: white;
+    font-family: 'Poppins';
+}
+
+/** gear config*/
+
+
+
+
+@media (max-width: 500px){
+
+    .streaktoday{
+        display: grid;
+        gap: 2px;
+        grid-template-columns: repeat(6, 15px);
+    }
+    
+    .quads{
+        border-radius: 3px;
+        height: 15px;
+        background-color: var(--color-quads);
+    }
+
+    .streak, .board-img, .board-timer, .board-buttons{
+        max-width: 380px;
+        width: 100%;
+    } 
+
+    .board-timer{
+        font-size: 9rem;
+    }
+
+ 
+
+   
 }
