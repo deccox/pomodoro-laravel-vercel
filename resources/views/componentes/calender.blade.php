@@ -48,7 +48,6 @@
 
         $('.calendertable').append(table); // Correção do seletor
 
-        console.log(table);
     });
 
 

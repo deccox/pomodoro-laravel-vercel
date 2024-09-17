@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="board-img flex">
-        <img src="{{ asset('img/cat1.svg') }}" alt="">
+        <img id="imgcarrocel" src="{{ asset('img/cat1.svg') }}" alt="">
     </div>
     <div class="board-timer flex">
         <div class="borderbox"><span class="countdown minutes">23</span></div>
@@ -55,16 +55,35 @@
 
 @push('timerscripts')
 <script>
-    const gear = document.querySelector('#btngear');
-    const gearModal = document.querySelector('.gear-modal');
-    const gear_close = document.querySelector('.gear-close');
+    
+    let configTimer = localStorage.getItem('configTimer')
+    let auxTimers = localStorage.getItem('auxTimers')
+    let timers = localStorage.getItem('timers')
+
+    let pomodoro = configTimer ? JSON.parse(configTimer).pomodoro : 50;
+    let short = configTimer ? JSON.parse(configTimer).short : 5 ;
+    let long = configTimer ? JSON.parse(configTimer).long : 10;
+    let dateBased = DateTime.now();
+    
+
+
+    let dateToday = DateTime.fromObject({
+        year: dateBased.year,
+        month: dateBased.month,
+        day: dateBased.day,
+        hour: timers ? timers.hour : 0,
+        minute: timers ? timers.minute : 0
+    })
+
+ 
+
+    console.log(dateToday.toJSON())
+
 
     
-    let timers = localStorage.getItem('timers')
     
-    let pomodoro = timers ? JSON.parse(timers).pomodoro : 50;
-    let short = timers ? JSON.parse(timers).short : 5 ;
-    let long = timers ? JSON.parse(timers).long : 10;
+    
+    
 
     let interval;
     let hours = 0;
@@ -75,15 +94,12 @@
 
     initConfig();
 
-
-    gear.addEventListener('click', (e) => {
-        gearModal.classList.add('active')
+    $('#btngear').on('click', function() {
+        document.querySelector('.gear-modal').classList.add('active')
     })
-
-    gear_close.addEventListener('click', (e) => {
-        gearModal.classList.remove('active')
+    $('.gear-close').on('click', function() {
+        document.querySelector('.gear-modal').classList.remove('active')
     })
-
 
     $('#reset').on('click', resetTimer)
 
@@ -93,7 +109,9 @@
     $('#start').on('click',startTimer)
     $('#stop').on('click',stopTimer)
 
+
     function startTimer(){
+        
         isPaused = false;
         if (interval) {
             clearInterval(interval); // Clear any existing interval
@@ -102,30 +120,45 @@
         interval = setInterval( () => {
         
             if(!isPaused){
-               
+                
+                
                 milliseconds += 10;
                 
                 if (milliseconds === 1000){
                     seconds--;
-                    milliseconds = 0;
+                    milliseconds = 0;  
+                    saveTimerToday();
+                    changeImage()
+                                        
                 }
-
-                if (seconds === 0){
-                    minutes--;
-                    seconds = 59;
-                }
-
                 
-
-                $('.hours').text(hours < 10 ? `0${hours}` : hours);
-                $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
-                $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
 
                 if (minutes == 0 && seconds == 0){
                     clearInterval(interval);
                     resetTimer();
                     appendQuads();
                 }
+
+                if (!isPaused && seconds == 0){
+                
+
+                    minutes = minutes == 0 ? 0 : minutes - 1;
+                    seconds =  59;
+                    saveTimerToday();
+                }
+
+
+
+                $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
+                $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
+
+                
+
+                
+
+                
+
+                
             }
             
         }, 10) 
@@ -135,13 +168,15 @@
         if (interval) {
             clearInterval(interval); // Clear any existing interval
         }
+        isPaused = true;
         hours = 0;
-        minutes = $('#pomodoro').val();
+        minutes = pomodoro
         seconds = 0;
         milliseconds = 0;
 
+        console.log(pomodoro)
         $('.seconds').text('00')
-        $('.minutes').text(minutes)
+        $('.minutes').text(pomodoro)
     }
 
     function applyTimer(){
@@ -153,13 +188,12 @@
             // "hour": hours,
             // "minutes": minutes,
             // "seconds" : seconds,
-            // "milliseconds" : milliseconds,
             "pomodoro" : $('#pomodoro').val(),
             "long": $('#longbreak').val(),
             "short" : $('#shortbreak').val(),
         }
 
-        localStorage.setItem('timers', JSON.stringify(timer))
+        localStorage.setItem('configTimer', JSON.stringify(timer))
         hours = 0;
         minutes = $('#pomodoro').val();
         seconds = 0;
@@ -182,18 +216,6 @@
     }
 
 
-    
-    // $('#pomodoro').change( (e) => {
-        
-    //     pomodoro = $(e.target).val();
-    //     console.log(pomodoro)
-    // })
-    // $('#shortbreak').change( (e) => {
-    //     short = $(e.target).val();
-    // })
-    // $('#longbreak').change( (e) => {
-    //     long = $(e.target).val();
-    // })
 
 
     const appendQuads = () => {
@@ -216,12 +238,51 @@
         $('.seconds').text('00')
     }
     
+    function changeImage(){
+        let data = localStorage.getItem('referTimer')
+        let checkpoint = ["0:30", "2:30", "3:30", "4:00"]
+        let pickimage = {
+            0: "{{ asset('img/cat2.svg')}}",
+            1: "{{ asset('img/cat3.svg')}}",
+            2: "{{ asset('img/cat4.svg')}}",
+            3: "{{ asset('img/cat5.svg')}}",
+        }
+        // data = data.split(':') 
+        // let pcHour = data[0]
+        // let pcMinute = data[0]
+        if (checkpoint.includes(data)){
+                        
+            $('#imgcarrocel').attr('src', pickimage[checkpoint.indexOf(data)])
+        }
+        
+    }
 
-    
 
+    function saveTimerToday(){
+        
+        const timer = localStorage.getItem('referTimer') ? localStorage.getItem('referTimer').split(':') : 0; 
+        
+        dateToday = DateTime.fromObject({
+            year: dateBased.year,
+            month: dateBased.month,
+            day: dateBased.day,
+            hour: timer ? timer[0] : 0,
+            minute: timer ? timer[1] : 0,
+            second: timer ? timer[2] : 0
+        })
 
+        dateToday = dateToday.plus({seconds: 1})
+        
+        localStorage.setItem('timers', JSON.stringify({
+            "minute": dateToday.minute, "hour": dateToday.hour
+        }))
 
-
+        dateToday.toJSON = function (){
+            return `${this.hour}:${this.minute}:${this.second}`
+        }
+     
+        localStorage.setItem('referTimer', dateToday.toJSON())
+    }
 </script>
 @endpush
 

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\PomodoroController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('layout');
+
+Route::controller(PomodoroController::class)->group(function(){
+    Route::get('/', 'index');
 });
