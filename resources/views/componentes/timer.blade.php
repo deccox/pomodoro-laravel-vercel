@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="gear-board">
-            <label for="short">
+            <label for="pomodoro">
                 Pomodoro
                 <input id="pomodoro" name="short" type="text">
             </label>
@@ -74,17 +74,7 @@
         hour: timers ? timers.hour : 0,
         minute: timers ? timers.minute : 0
     })
-
- 
-
-    console.log(dateToday.toJSON())
-
-
     
-    
-    
-    
-
     let interval;
     let hours = 0;
     let minutes = pomodoro;
@@ -110,59 +100,107 @@
     $('#stop').on('click',stopTimer)
 
 
-    function startTimer(){
+    // function startTimer(){
         
-        isPaused = false;
-        if (interval) {
-            clearInterval(interval); // Clear any existing interval
-        }
+    //     isPaused = false;
 
-        interval = setInterval( () => {
-        
-            if(!isPaused){
-                
-                
-                milliseconds += 10;
-                
-                if (milliseconds === 1000){
-                    seconds--;
-                    milliseconds = 0;  
-                    saveTimerToday();
-                    changeImage()
-                                        
-                }
-                
+    //     if (interval) {
+    //         clearInterval(interval); // Clear any existing interval
+    //     }
 
-                if (minutes == 0 && seconds == 0){
-                    clearInterval(interval);
-                    resetTimer();
-                    appendQuads();
-                }
+    //     const dateNow = DateTime.now();
 
-                if (!isPaused && seconds == 0){
-                
+    //     interval = setInterval( () => {
 
-                    minutes = minutes == 0 ? 0 : minutes - 1;
-                    seconds =  59;
-                    saveTimerToday();
-                }
-
-
-
-                $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
-                $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
-
-                
-
-                
-
-                
-
-                
-            }
             
-        }, 10) 
+
+
+    //         if(!isPaused){
+                
+                
+    //             milliseconds += 10;
+                
+    //             if (milliseconds === 1000){
+    //                 seconds--;
+    //                 milliseconds = 0;  
+    //                 saveTimerToday();
+    //                 changeImage()
+                                        
+    //             }
+                
+
+    //             if (minutes == 0 && seconds == 0){
+    //                 clearInterval(interval);
+    //                 resetTimer();
+    //                 appendQuads();
+    //             }
+
+    //             if (!isPaused && seconds == 0){
+                
+
+    //                 minutes = minutes == 0 ? 0 : minutes - 1;
+    //                 seconds =  59;
+    //                 saveTimerToday();
+    //             }
+
+
+
+    //             $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
+    //             $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
+
+                
+
+                
+
+                
+
+                
+    //         }
+            
+    //     }, 10) 
+    // }
+
+    function startTimer() {
+    isPaused = false;
+
+    if (interval) {
+        clearInterval(interval); // Limpa qualquer intervalo existente
     }
+
+    const startTime = DateTime.now(); // Hora de início atual
+    const endTime = startTime.plus({ minutes: pomodoro }); // Hora de término com base no tempo do Pomodoro
+
+    interval = setInterval(() => {
+        if (!isPaused) {
+            const currentTime = DateTime.now(); // Hora atual
+            const diff = endTime.diff(currentTime, ['minutes', 'seconds', 'milliseconds']); // Calcula a diferença de tempo
+
+            if (diff.toMillis() <= 0) { // Quando o tempo restante acabar
+                clearInterval(interval);
+                resetTimer();
+                appendQuads();
+                return;
+            }
+
+            if(diff.seconds != seconds){
+                saveTimerToday();
+                changeImage();
+            }
+
+            minutes = diff.minutes; // Atualiza os minutos restantes
+            seconds = diff.seconds; // Atualiza os segundos restantes
+            milliseconds = diff.milliseconds; // Atualiza os milissegundos restantes
+
+            
+            
+
+            // Atualiza o display com os valores corretos
+            $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
+            $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
+        }
+    }, 10);
+}
+
 
     function resetTimer(){
         if (interval) {
@@ -227,6 +265,7 @@
 
 
 
+
     function initConfig () {
         $('#pomodoro').attr('placeholder', pomodoro)
         $('#pomodoro').val(pomodoro)
@@ -240,16 +279,14 @@
     
     function changeImage(){
         let data = localStorage.getItem('referTimer')
-        let checkpoint = ["0:30", "2:30", "3:30", "4:00"]
+        let checkpoint = ["1:30:0", "2:30:0", "3:30:0", "4:00:0"]
         let pickimage = {
             0: "{{ asset('img/cat2.svg')}}",
             1: "{{ asset('img/cat3.svg')}}",
             2: "{{ asset('img/cat4.svg')}}",
             3: "{{ asset('img/cat5.svg')}}",
         }
-        // data = data.split(':') 
-        // let pcHour = data[0]
-        // let pcMinute = data[0]
+
         if (checkpoint.includes(data)){
                         
             $('#imgcarrocel').attr('src', pickimage[checkpoint.indexOf(data)])
@@ -261,7 +298,6 @@
     function saveTimerToday(){
         
         const timer = localStorage.getItem('referTimer') ? localStorage.getItem('referTimer').split(':') : 0; 
-        
         dateToday = DateTime.fromObject({
             year: dateBased.year,
             month: dateBased.month,
