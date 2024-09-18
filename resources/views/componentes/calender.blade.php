@@ -18,7 +18,14 @@
 <script>
     
     $(document).ready(function() {
+        const setClassPerHour = (item) => {
+            item = item.split(':');
+            if (Number(item[0]) <= 1) return 'beginner'
+            if (Number(item[0]) >= 2 && Number(item[0]) < 3) return 'intermediare'
+            if (Number(item[0]) >= 3 && Number(item[0]) < 4) return 'interplus'
+            if (Number(item[0]) > 4) return 'advance'
 
+        }
 
         let timerRegister = JSON.parse(@json($data));
 
@@ -41,7 +48,14 @@
                 tbody.append(bodyrow)
                 bodyrow = $('<tr></tr>')
             }
-            bodyrow.append($('<td></td>').attr('data-data', i).append($('<span>'+i+'</span>')))
+            bodyrow.append($('<td></td>')
+            .attr('data-data', i)
+            .append($('<span>'+i+'</span>'))
+            .append($('<span>'+timerRegister[i].timer_quantity+'</span>')
+                .attr('class',setClassPerHour(timerRegister[i].timer_quantity))
+                
+            
+            ))
 
         }
 
@@ -52,6 +66,11 @@
         table.append(tbody);
 
         $('.calendertable').append(table); // Correção do seletor
+
+
+
+
+        
 
     });
 

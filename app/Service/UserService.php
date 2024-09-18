@@ -18,8 +18,9 @@ class UserService
 
     public function getRegisterFormated(){
         $data = $this->getAllRegisterTimer();
-
-        return $this->FormatDatePerDay($data);
+        $data = $this->FormatDatePerDay($data);
+        $data = $this->FormatHourTimer($data);
+        return $data ;
     }
     /**
      * @return array
@@ -40,11 +41,23 @@ class UserService
             $item['timer_day'] = $matches[1];
             
             return $item;
-            
+
         }, $data);
         
    
         return $data;
 
+    }
+
+    public function FormatHourTimer($data): Array{
+
+        $data = array_map(function($item){
+            preg_match("/\d+:\d+/", $item['timer_quantity'], $matches);
+            $item['timer_quantity'] = $matches[0];
+
+            return $item;
+        }, $data);
+
+        return $data;
     }
 }
