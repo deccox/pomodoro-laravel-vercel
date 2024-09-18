@@ -80,7 +80,8 @@
     let minutes = pomodoro;
     let seconds  = 0;
     let milliseconds = 0;
-    let isPaused = false;
+    let isPaused = true;
+    let isStarted = false;
 
     initConfig();
 
@@ -96,7 +97,10 @@
     $('#aplicar').on('click', applyTimer)
 
 
-    $('#start').on('click',startTimer)
+    $('#start').on('click',function (){
+        console.log(isPaused);
+        if(isPaused) startTimer();
+    })
     $('#stop').on('click',stopTimer)
 
 
@@ -162,7 +166,10 @@
 
     function startTimer() {
     isPaused = false;
-
+    isStarted = false;
+    
+    
+    
     if (interval) {
         clearInterval(interval); // Limpa qualquer intervalo existente
     }
@@ -170,6 +177,7 @@
     const startTime = DateTime.now(); // Hora de início atual
     const endTime = startTime.plus({ minutes: pomodoro }); // Hora de término com base no tempo do Pomodoro
 
+    
     interval = setInterval(() => {
         if (!isPaused) {
             const currentTime = DateTime.now(); // Hora atual
@@ -177,6 +185,7 @@
 
             if (diff.toMillis() <= 0) { // Quando o tempo restante acabar
                 clearInterval(interval);
+                isStarted = false;
                 resetTimer();
                 appendQuads();
                 return;
@@ -197,6 +206,8 @@
             // Atualiza o display com os valores corretos
             $('.minutes').text(minutes < 10 ? `0${minutes}` : minutes);
             $('.seconds').text(seconds < 10 ? `0${seconds}` : seconds);
+
+            $('title').text(`${minutes}:${seconds}`)
         }
     }, 10);
 }
@@ -212,7 +223,8 @@
         seconds = 0;
         milliseconds = 0;
 
-        console.log(pomodoro)
+        
+        $('title').text("pomodor")
         $('.seconds').text('00')
         $('.minutes').text(pomodoro)
     }
@@ -233,11 +245,11 @@
 
         localStorage.setItem('configTimer', JSON.stringify(timer))
         hours = 0;
-        minutes = $('#pomodoro').val();
+        minutes = timer.pomodoro;
         seconds = 0;
         milliseconds = 0;
-        short = $('#shortbreak').val();
-        logn = $('#longbreak').val()
+        short = timer.short;
+        logn = timer.long
         
         
         
@@ -250,7 +262,7 @@
 
     function stopTimer(){
         isPaused = true;
-        
+        isStarted = true;
     }
 
 
