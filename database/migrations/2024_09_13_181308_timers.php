@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('user_id');
             $table->time('timer_quantity');
+            $table->timestamp('timer_day');
         });
     }
 
