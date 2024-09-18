@@ -2,24 +2,49 @@
 
 namespace App\Service;
 
-use App\Models\Scopes\UserScope;
+use App\Models\TimerRegister;
+use PhpParser\Node\Arg;
 
 class UserService
 {
     /**
      * Create a new class instance.
      */
-    public function __construct(private UserScope $user)
+    public function __construct()
     {
         //
     }
 
+
+    public function getRegisterFormated(){
+        $data = $this->getAllRegisterTimer();
+
+        return $this->FormatDatePerDay($data);
+    }
     /**
      * @return array
      */
-    public function getAllRegisterTimer(): array
+    public function getAllRegisterTimer(): Array
     {
-        $arr = [];
-        return $arr;
+        $data = TimerRegister::select('timer_quantity', 'timer_day')->get()->toArray();
+        return $data;
+    }
+
+
+    public function FormatDatePerDay($data): Array{
+
+        $data = array_map(function($item){
+
+            preg_match("/-(\d+)-/", $item['timer_day'], $matches);
+
+            $item['timer_day'] = $matches[1];
+            
+            return $item;
+            
+        }, $data);
+        
+   
+        return $data;
+
     }
 }

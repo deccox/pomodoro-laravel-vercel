@@ -21,9 +21,11 @@ class PomodoroController extends Controller
      */
     public function index(): \Illuminate\Contracts\View\View
     {   
-        $data = $this->service->getAllRegisterTimer();
-        return view('layout', ["data" => $data]);
+        $data = $this->service->getRegisterFormated();
+   
+        return view('layout', ["data" => json_encode($data)]);
     }
 
+    
     
 }

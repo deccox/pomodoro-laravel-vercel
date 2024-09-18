@@ -16,8 +16,13 @@
 @push('calenderscripts')
 
 <script>
-
+    
     $(document).ready(function() {
+
+
+        let timerRegister = JSON.parse(@json($data));
+
+        console.log(timerRegister);
         let week = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
         let table = $('<table></table>').addClass('table_calender');
         let tbody = $('<tbody></tbody>')

@@ -6,9 +6,11 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\UserIdScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 
 /**
  * Class TimersRegister
@@ -20,9 +22,16 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
+
+
+
+#[ScopedBy(UserIdScope::class)] // user_id = '1'
 class TimerRegister extends Model
 {
 	use HasFactory;
+
+
+
 	
 	protected $table = 'timers_register';
 	public $timestamps = false;
@@ -37,4 +46,5 @@ class TimerRegister extends Model
 		'timer_quantity',
 		'timer_day'
 	];
+
 }
