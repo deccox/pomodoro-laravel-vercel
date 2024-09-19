@@ -24,7 +24,6 @@
             if (Number(item[0]) >= 2 && Number(item[0]) < 3) return 'intermediare'
             if (Number(item[0]) >= 3 && Number(item[0]) < 4) return 'interplus'
             if (Number(item[0]) > 4) return 'advance'
-
         }
 
         let timerRegister = JSON.parse(@json($data));
